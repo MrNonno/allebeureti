@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Statistics</title>
+</head>
+<body>
+    <h1>Chess Statistics</h1>
+    <div id="statistics"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('https://api.chess.com/pub/player/max/stats')
+                .then(response => response.json())
+                .then(data => {
+                    const statisticsDiv = document.getElementById('statistics');
+                    statisticsDiv.innerHTML = `
+                        <h2>Chess Statistics for ${data.username}</h2>
+                        <p>Total Games Played: ${data.chess_daily.record.games}</p>
+                        <p>Total Wins: ${data.chess_daily.record.win}</p>
+                        <p>Total Draws: ${data.chess_daily.record.draw}</p>
+                        <p>Total Losses: ${data.chess_daily.record.loss}</p>
+                        <p>Best Daily Rating: ${data.chess_daily.best.rating}</p>
+                        <p>Current Daily Rating: ${data.chess_daily.last.rating}</p>
+                    `;
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    const statisticsDiv = document.getElementById('statistics');
+                    statisticsDiv.innerHTML = '<p>Error fetching data. Please try again later.</p>';
+                });
+        });
+    </script>
+</body>
+</html>

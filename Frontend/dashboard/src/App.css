@@ -1,42 +1,59 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+  .left-section {
+    background-color: lightskyblue;
+    padding: 0;
   }
-  to {
-    transform: rotate(360deg);
+  
+  .title {
+    background-color: lightblue;
+    padding: 20px;
   }
-}
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+  .games-list {
+    background-color: lightcyan;
+    padding: 20px;
   }
-}
 
-.card {
-  padding: 2em;
-}
+  .right-section {
+    padding: 0;
+  }
 
-.read-the-docs {
-  color: #888;
-}
+  .game-selected {
+    background-color: lightblue;
+    padding: 20px;
+  }
+
+  body {
+    background-color: lightskyblue;
+    padding: 20px;
+  }
+  
+  .game-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 16px;
+    padding: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .game-card .team {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    text-align: center;
+  }
+  
+  .game-card .team img {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 5px;
+    border-radius: 100px;
+  }
+  
+  .game-card .vs {
+    font-size: 24px;
+    font-weight: bold;
+  }  
