@@ -3,14 +3,14 @@ import React from 'react';
 function Game({ team1Name, team1Icon, team2Name, team2Icon }) {
   return (
     <div className="game-card">
-      <div className="team">
+      <div className="team-card">
         <img src={team1Icon} alt={team1Name} />
-        <h3>{team1Name}</h3>
+        <h4>{team1Name}</h4>
       </div>
       <div className="vs">vs</div>
-      <div className="team">
+      <div className="team-card">
         <img src={team2Icon} alt={team2Name} />
-        <h3>{team2Name}</h3>
+        <h4>{team2Name}</h4>
       </div>
     </div>
   );
