@@ -1,13 +1,13 @@
 import React from 'react';
 import { Col } from 'react-bootstrap';
-import GameSelected from './GameSelected';
+import GameInfo from './GameInfo';
 import './Right.css';
 
 function Right() {
   return (
     <>
-      <Col sm={8}>
-        <GameSelected />
+      <Col>
+        <GameInfo />
       </Col>
     </>
   );

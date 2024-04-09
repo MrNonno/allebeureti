@@ -3,7 +3,7 @@ import React from 'react';
 
 function Title() {
   return (
-    <div className="title">
+    <div className="boxy">
       <div className="title-header">
         <img src="husk.png" alt="Basketball" className="title-image" />
         <h1 className="title-heading">Basketball Scores</h1>
