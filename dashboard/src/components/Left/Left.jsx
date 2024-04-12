@@ -1,25 +1,15 @@
 import React from 'react';
-import { Row, Col } from 'react-bootstrap';
-import Title from './Title';
+import { Col } from 'react-bootstrap';
 import GamesList from './GamesList';
+import Title from './Title';
 import './Left.css';
 
-function Left() {
+function Left({ onSelectGame }) {
   return (
-    <>
-        <Col sm={4}>
-            <Row>
-                <Col>
-                    <Title />
-                </Col>
-            </Row>
-            <Row>
-                <Col>
-                    <GamesList />
-                </Col>
-            </Row>
-        </Col>
-    </>
+    <Col sm={4}>
+      <Title />
+      <GamesList onSelectGame={onSelectGame} />
+    </Col>
   );
 }
 

@@ -3,14 +3,14 @@ import { Container, Row, Col } from 'react-bootstrap';
 import OpposingTeams from './OpposingTeams';
 import TeamInfo from './TeamInfo'; // Import the TeamInfo component
 
-function GameInfo() {
+function GameInfo({ gameId }) {
   const [players, setPlayers] = useState([]);
   const [gameData, setGameData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch game data from the server when the component mounts
-    fetch('http://localhost:3000/api/games/2') // Change '1' to the actual gameId
+    // Fetch game data from the server based on the provided gameId
+    fetch(`http://localhost:3000/api/games/${gameId}`)
       .then(response => response.json())
       .then(data => {
         setGameData(data);
@@ -18,14 +18,14 @@ function GameInfo() {
       })
       .catch(error => console.error('Error fetching game data:', error));
     
-    // Fetch player data from the server when the component mounts
-    fetch('http://localhost:3000/api/games/2/players') // Change '1' to the actual gameId
+    // Fetch player data from the server based on the provided gameId
+    fetch(`http://localhost:3000/api/games/${gameId}/players`)
       .then(response => response.json())
       .then(data => {
         setPlayers(data);
       })
       .catch(error => console.error('Error fetching players:', error));
-  }, []);
+  }, [gameId]);
 
   if (loading || !gameData) {
     return <h1>Loading...</h1>; // Display a loading message while data is being fetched
