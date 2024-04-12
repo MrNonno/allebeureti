@@ -5,10 +5,10 @@ function Title() {
   return (
     <div className="boxy">
       <div className="title-header">
-        <img src="husk.png" alt="Basketball" className="title-image" />
-        <h1 className="title-heading">Basketball Scores</h1>
+        <img src="Logo_Basket.png"  alt="Basketball" className="title-image" />
+        <h1 className="title-heading">Magic Balls</h1>
       </div>
-      <p className="subtitle">You are my sunshine, my only sunshine...</p>
+      <p className="subtitle">Here you will find all the results of the matches. Enjoy!</p>
     </div>
   );
 }
