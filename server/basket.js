@@ -1,10 +1,12 @@
 const express = require('express');
+const cors = require('cors');
 const { connectToDatabase, getDatabase } = require('./database');
 
 const app = express();
 const port = 3000;
 
 app.use(express.json());
+app.use(cors());
 
 // Connect to MongoDB
 connectToDatabase();
@@ -23,22 +25,24 @@ app.get('/api/games', async (req, res) => {
     }
 });
 
-// Endpoint to retrieve all games with only team names
-app.get('/api/games/team-names', async (req, res) => {
+// Endpoint to retrieve data for a specific game
+app.get('/api/games/:gameId', async (req, res) => {
     try {
+        const gameId = parseInt(req.params.gameId);
+
         const db = getDatabase();
-        const games = await db.collection('games').aggregate([
-            {
-                $project: {
-                    _id: 0,
-                    home_team_name: "$home_team.full_name",
-                    visitor_team_name: "$visitor_team.full_name"
-                }
-            }
-        ]).toArray();
-        res.json(games);
+        const gamesCollection = db.collection('games');
+
+        // Find the game by gameId
+        const game = await gamesCollection.findOne({ id: gameId });
+
+        if (!game) {
+            return res.status(404).json({ error: 'Game not found' });
+        }
+
+        res.json(game);
     } catch (err) {
-        console.error('Error fetching games:', err);
+        console.error('Error fetching data for game:', err);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -73,6 +77,26 @@ app.get('/api/games/:gameId/players', async (req, res) => {
     }
 });
 
+// Endpoint to retrieve all games with only team names
+app.get('/api/games/team-names', async (req, res) => {
+    try {
+        const db = getDatabase();
+        const games = await db.collection('games').aggregate([
+            {
+                $project: {
+                    _id: 0,
+                    home_team_name: "$home_team.full_name",
+                    visitor_team_name: "$visitor_team.full_name"
+                }
+            }
+        ]).toArray();
+        res.json(games);
+    } catch (err) {
+        console.error('Error fetching games:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 //MARK: Stats here
 // Endpoint to retrieve all stats
 app.get('/api/stats', async (req, res) => {
@@ -101,8 +125,9 @@ app.get('/api/teams', async (req, res) => {
     }
 });
 
-// Endpoint to retrieve all games of a specific team
-app.get('/api/teams/:teamId/games', async (req, res) => {
+//MARK: Team Stats
+// Endpoint to retrieve statistics for a specific team
+app.get('/api/teams/:teamId/statistics', async (req, res) => {
     try {
         const teamId = parseInt(req.params.teamId);
 
@@ -124,9 +149,28 @@ app.get('/api/teams/:teamId/games', async (req, res) => {
             ]
         }).toArray();
 
-        res.json(teamGames);
+        // Calculate win rate for the team
+        const totalGamesPlayed = teamGames.length;
+        const totalWins = teamGames.filter(game => {
+            if (game.home_team.full_name === team.full_name && game.home_team_score > game.visitor_team_score) {
+                return true;
+            }
+            if (game.visitor_team.full_name === team.full_name && game.visitor_team_score > game.home_team_score) {
+                return true;
+            }
+            return false;
+        }).length;
+
+        const winRate = totalGamesPlayed > 0 ? (totalWins / totalGamesPlayed) * 100 : 0;
+
+        res.json({
+            team: team.full_name,
+            winRate: winRate.toFixed(2) + '%',
+            totalGamesPlayed: totalGamesPlayed
+            // Add more statistics as needed
+        });
     } catch (err) {
-        console.error('Error fetching games for team:', err);
+        console.error('Error fetching statistics for team:', err);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
