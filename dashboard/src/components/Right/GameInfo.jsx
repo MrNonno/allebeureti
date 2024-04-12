@@ -1,43 +1,40 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import OpposingTeams from './OpposingTeams';
 import TeamInfo from './TeamInfo'; // Import the TeamInfo component
 
 function GameInfo() {
-  // Mock data for the game
-  const gameData = {
-    id: 1,
-    date: "2023-10-24",
-    season: 2023,
-    status: "Final",
-    period: 4,
-    time: "Final",
-    postseason: false,
-    home_team_score: 119,
-    visitor_team_score: 107,
-    home_team: {
-      id: 8,
-      conference: "West",
-      division: "Northwest",
-      city: "Denver",
-      name: "Nuggets",
-      full_name: "Denver Nuggets",
-      abbreviation: "DEN"
-    },
-    visitor_team: {
-      id: 14,
-      conference: "West",
-      division: "Pacific",
-      city: "Los Angeles",
-      name: "Lakers",
-      full_name: "Los Angeles Lakers",
-      abbreviation: "LAL"
-    }
-  };
+  const [players, setPlayers] = useState([]);
+  const [gameData, setGameData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Fetch game data from the server when the component mounts
+    fetch('http://localhost:3000/api/games/2') // Change '1' to the actual gameId
+      .then(response => response.json())
+      .then(data => {
+        setGameData(data);
+        setLoading(false);
+      })
+      .catch(error => console.error('Error fetching game data:', error));
+    
+    // Fetch player data from the server when the component mounts
+    fetch('http://localhost:3000/api/games/2/players') // Change '1' to the actual gameId
+      .then(response => response.json())
+      .then(data => {
+        setPlayers(data);
+      })
+      .catch(error => console.error('Error fetching players:', error));
+  }, []);
+
+  if (loading || !gameData) {
+    return <h1>Loading...</h1>; // Display a loading message while data is being fetched
+  }
 
   return (
     <>
       <Container className="boxy">
+        {/* Display opposing teams */}
         <OpposingTeams
           team1={gameData.home_team}
           team2={gameData.visitor_team}
@@ -46,15 +43,28 @@ function GameInfo() {
         />
       </Container>
 
+      {/* Display player data */}
       <Container className="boxy">
         <Row>
           <Col>
             <TeamInfo team={gameData.home_team} />
+            {/* Map through players and display their information */}
+            {players.map(player => (
+              <div key={player.id}>
+                {player.first_name} {player.last_name} - {player.position}
+              </div>
+            ))}
           </Col>
           <Col>
             <TeamInfo team={gameData.visitor_team} />
+            {/* Map through players and display their information */}
+            {players.map(player => (
+              <div key={player.id}>
+                {player.first_name} {player.last_name} - {player.position}
+              </div>
+            ))}
           </Col>
-        </Row>  
+        </Row>
       </Container>
     </>
   );
