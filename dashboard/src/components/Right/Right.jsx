@@ -1,21 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Col } from 'react-bootstrap';
 import GameInfo from './GameInfo';
 import './Right.css';
 
 function Right() {
-  const [selectedGameId, setSelectedGameId] = useState(1);
-
-  const handleGameSelect = (gameId) => {
-    setSelectedGameId(gameId);
-  };
-
   return (
-    <>
-      <Col>
-        <GameInfo gameId={selectedGameId} />
-      </Col>
-    </>
+    <Col>
+      <GameInfo gameId="1"/>
+    </Col>
   );
 }
 

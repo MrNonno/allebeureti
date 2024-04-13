@@ -80,7 +80,7 @@ body {
     }
   
   .games-list-container {
-    position: relative; /* Ensure the gradient overlay is positioned relative to this container */
+    position: relative;
     flex: 1;
     overflow-y: auto;
   }

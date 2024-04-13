@@ -1,8 +1,9 @@
 import React from 'react';
 
-function Game({ gameId, team1Name, team1Icon, team2Name, team2Icon, onSelectGame }) {
+function Game({ gameId, team1Name, team1Icon, team2Name, team2Icon }) {
+
   const handleClick = () => {
-    onSelectGame(gameId);
+    handleGameSelect(gameId);
   };
 
   return (
