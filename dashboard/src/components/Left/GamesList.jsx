@@ -1,3 +1,4 @@
+// GamesList.jsx
 import React, { useState, useEffect } from 'react';
 import Game from './Game';
 
@@ -22,9 +23,10 @@ function GamesList() {
   return (
     <div className="games-list-container">
       <div className="games-list">
-      {games.map(game => (
+        {games.map(game => (
           <Game
             key={game.id}
+            gameId={game.id}
             team1Name={game.home_team.full_name}
             team1Icon={`/teams/${game.home_team.name.toLowerCase()}.png`}
             team2Name={game.visitor_team.full_name}

@@ -1,9 +1,9 @@
+// Game.jsx
 import React from 'react';
 
 function Game({ gameId, team1Name, team1Icon, team2Name, team2Icon }) {
-
   const handleClick = () => {
-    handleGameSelect(gameId);
+    localStorage.setItem('selectedGameId', gameId.toString());
   };
 
   return (
