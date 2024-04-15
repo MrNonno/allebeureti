@@ -1,4 +1,4 @@
-.game-selected {
+  .game-selected {
     background-color: #222;
     padding: 20px;
     border-radius: 10px;
@@ -55,4 +55,108 @@
     color: #ddd;
     font-size: 1em;
     margin-bottom: 5px;
-  } 
+  }
+
+  .team-info {
+    background-color: #222;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .team-name {
+    color: #fff;
+    font-size: 2.5em;
+    font-weight: 600;
+  }
+  
+  .team-abbreviation {
+    color: #888;
+    font-size: 1.2em;
+    margin-top: 5px;
+  }
+  
+  .team-details {
+    color: #ddd;
+    margin-bottom: 5px;
+  }
+  
+  .team-stats {
+    color: #fff;
+    font-size: 1.8em;
+    margin-top: 20px;
+  }  
+
+  .team-player-cards-container {
+    display: flex;
+    overflow-x: auto; 
+    max-width: calc(100vw - 60px);
+  }
+  
+  .team-player-cards-container > div {
+    flex: 0 0 auto;
+    margin-right: 10px;
+  }
+
+  .team-player-cards-container::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .team-player-cards-container::-webkit-scrollbar-thumb {
+    background-color: transparent;
+  }  
+  
+  .team-container {
+    position: relative;
+  }
+  
+  .team-player-cards-container {
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  
+  .team-container {
+    position: relative;
+  }
+  
+  .arrows-container {
+    position: relative;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  
+  .scroll-arrows {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    z-index: 1;
+  }
+  
+  .scroll-button {
+    background-color: transparent;
+    border: none;
+    color: #888;
+    font-size: 2rem;
+    cursor: pointer;
+    transition: color 0.3s;
+    border-radius: 50%;
+    pointer-events: all;
+  }
+
+  
+  .scroll-button:hover {
+    color: #fff;
+  }
+  
+  .left {
+    margin-right: auto;
+  }
+  
+  .right {
+    margin-left: auto;
+  }
+  

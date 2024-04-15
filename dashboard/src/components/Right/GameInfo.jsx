@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import OpposingTeams from './OpposingTeams';
-import TeamInfo from './TeamInfo'; // Import the TeamInfo component
+import Team from './Team';
 
 function GameInfo({ gameId }) {
   const [players, setPlayers] = useState([]);
@@ -9,7 +9,6 @@ function GameInfo({ gameId }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch game data from the server based on the provided gameId
     fetch(`http://localhost:3000/api/games/${gameId}`)
       .then(response => response.json())
       .then(data => {
@@ -18,7 +17,6 @@ function GameInfo({ gameId }) {
       })
       .catch(error => console.error('Error fetching game data:', error));
     
-    // Fetch player data from the server based on the provided gameId
     fetch(`http://localhost:3000/api/games/${gameId}/players`)
       .then(response => response.json())
       .then(data => {
@@ -28,13 +26,15 @@ function GameInfo({ gameId }) {
   }, [gameId]);
 
   if (loading || !gameData) {
-    return <h1>Loading...</h1>; // Display a loading message while data is being fetched
+    return <h1>Loading...</h1>;
   }
+
+  const homeTeamPlayers = players.filter(player => player.team.abbreviation === gameData.home_team.abbreviation);
+  const visitorTeamPlayers = players.filter(player => player.team.abbreviation === gameData.visitor_team.abbreviation);
 
   return (
     <>
       <Container className="boxy">
-        {/* Display opposing teams */}
         <OpposingTeams
           team1={gameData.home_team}
           team2={gameData.visitor_team}
@@ -43,26 +43,13 @@ function GameInfo({ gameId }) {
         />
       </Container>
 
-      {/* Display player data */}
       <Container className="boxy">
         <Row>
-          <Col>
-            <TeamInfo team={gameData.home_team} />
-            {/* Map through players and display their information */}
-            {players.map(player => (
-              <div key={player.id}>
-                {player.first_name} {player.last_name} - {player.position}
-              </div>
-            ))}
+          <Col xs={6}>
+            <Team team={gameData.home_team} players={homeTeamPlayers} />
           </Col>
-          <Col>
-            <TeamInfo team={gameData.visitor_team} />
-            {/* Map through players and display their information */}
-            {players.map(player => (
-              <div key={player.id}>
-                {player.first_name} {player.last_name} - {player.position}
-              </div>
-            ))}
+          <Col xs={6}>
+            <Team team={gameData.visitor_team} players={visitorTeamPlayers} />
           </Col>
         </Row>
       </Container>
