@@ -154,12 +154,8 @@ app.get('/api/teams/:teamId/statistics', async (req, res) => {
             ]
         }).toArray();
 
-        console.log('Retrieved team games:', teamGames);
-
         // Find all stats for the team
         const teamStats = await statsCollection.find({ "team.id": teamId }).toArray();
-
-        console.log('Retrieved team stats:', teamStats);
 
         // Calculate total games played and total wins
         let totalGamesPlayed = 0;
@@ -176,12 +172,8 @@ app.get('/api/teams/:teamId/statistics', async (req, res) => {
             }
         });
 
-        console.log('Total games played:', totalGamesPlayed);
-        console.log('Total wins:', totalWins);
-
         // Calculate average win rate
         const averageWinRate = totalGamesPlayed > 0 ? (totalWins / totalGamesPlayed) * 100 : 0;
-        console.log('Average win rate:', averageWinRate);
 
         // Calculate total field goals made and attempted
         let totalFGMade = 0;
@@ -193,7 +185,6 @@ app.get('/api/teams/:teamId/statistics', async (req, res) => {
 
         // Calculate field goal percentage
         const fieldGoalPercentage = totalFGAttempted > 0 ? (totalFGMade / totalFGAttempted) * 100 : 0;
-        console.log('Field goal percentage:', fieldGoalPercentage);
 
         // Calculate total three-point field goals made and attempted
         let totalThreePMade = 0;
@@ -205,7 +196,6 @@ app.get('/api/teams/:teamId/statistics', async (req, res) => {
 
         // Calculate three-point field goal percentage
         const threePointPercentage = totalThreePAttempted > 0 ? (totalThreePMade / totalThreePAttempted) * 100 : 0;
-        console.log('Three-point percentage:', threePointPercentage);
 
         // Calculate total free throws made and attempted
         let totalFTMade = 0;
@@ -217,7 +207,6 @@ app.get('/api/teams/:teamId/statistics', async (req, res) => {
 
         // Calculate free throw percentage
         const freeThrowPercentage = totalFTAttempted > 0 ? (totalFTMade / totalFTAttempted) * 100 : 0;
-        console.log('Free throw percentage:', freeThrowPercentage);
 
         // Calculate total rebounds
         let totalRebounds = 0;
@@ -227,7 +216,6 @@ app.get('/api/teams/:teamId/statistics', async (req, res) => {
 
         // Calculate average rebounds per game
         const averageRebounds = totalRebounds / teamStats.length;
-        console.log('Average rebounds:', averageRebounds);
 
         // Calculate total assists
         let totalAssists = 0;
