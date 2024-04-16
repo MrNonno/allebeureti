@@ -126,6 +126,7 @@ app.get('/api/teams', async (req, res) => {
 });
 
 //MARK: Team Stats
+// Endpoint to retrieve all team stats and calculate team averages
 app.get('/api/teams/:teamId/statistics', async (req, res) => {
     try {
         const teamId = parseInt(req.params.teamId);
@@ -276,7 +277,6 @@ app.get('/api/teams/:teamId/statistics', async (req, res) => {
             averageBlocks: averageBlocks.toFixed(2),
             averageTurnovers: averageTurnovers.toFixed(2),
             averagePersonalFouls: averagePersonalFouls.toFixed(2)
-            // Add more statistics as needed
         });
     } catch (err) {
         console.error('Error fetching statistics for team:', err);

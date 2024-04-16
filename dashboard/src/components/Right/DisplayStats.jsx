@@ -1,96 +1,121 @@
 import React, { useState, useEffect } from 'react';
-import * as am5 from "@amcharts/amcharts5";
+import { Container, Row, Col } from 'react-bootstrap';
+import './DisplayStats.css'; // Import CSS file for additional styling
 
-const DisplayStats = () => {
-    const [averageWinRate, setAverageWinRate] = useState('');
-    const [fieldGoalPercentage, setFieldGoalPercentage] = useState('');
-    const [threePointPercentage, setThreePointPercentage] = useState('');
+const DisplayStats = ({ teamId, setTeamStatistics }) => {
+  const [teamStats, setTeamStats] = useState(null);
 
-    useEffect(() => {
-        // Fetch data from the backend for average win rate
-        fetch('/api/teams/:teamId/average-win-rate')
-            .then(response => response.json())
-            .then(data => {
-                console.log('Average Win Rate Data:', data);
-                setAverageWinRate(data.averageWinRate);
-            })
-            .catch(error => {
-                console.error('Error fetching average win rate:', error);
-            });
+  useEffect(() => {
+    // Fetch team statistics from the backend
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/api/teams/${teamId}/statistics`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch team statistics');
+        }
+        const data = await response.json();
+        console.log('Team Statistics Data:', data);
+        setTeamStats(data);
+        setTeamStatistics(data);
+      } catch (error) {
+        console.error('Error fetching team statistics:', error);
+      }
+    };
     
-        // Fetch data from the backend for field goal percentage
-        fetch('/api/teams/:teamId/field-goal-percentage')
-            .then(response => response.json())
-            .then(data => {
-                console.log('Field Goal Percentage Data:', data);
-                setFieldGoalPercentage(data.fieldGoalPercentage);
-            })
-            .catch(error => {
-                console.error('Error fetching field goal percentage:', error);
-            });
-    
-        // Fetch data from the backend for three-point percentage
-        fetch('/api/teams/:teamId/three-point-percentage')
-            .then(response => response.json())
-            .then(data => {
-                console.log('Three-Point Percentage Data:', data); // Log data to check if it's correct
-                setThreePointPercentage(data.threePointPercentage);
-            })
-            .catch(error => {
-                console.error('Error fetching three-point percentage:', error);
-            });
-    
-        // Fetch data for other statistics as needed
-    }, []);    
+    fetchData();
+  }, [teamId, setTeamStatistics]);
 
-    useEffect(() => {
-        // Create a chart instance
-        let chart = am5.create("chartDiv", am5.Charts.XYChart);
-
-        // Add data
-        chart.data = [
-            {
-                statistic: 'Average Win Rate',
-                value: parseFloat(averageWinRate.replace('%', ''))
-            },
-            {
-                statistic: 'Field Goal Percentage',
-                value: parseFloat(fieldGoalPercentage.replace('%', ''))
-            },
-            {
-                statistic: 'Three-Point Percentage',
-                value: parseFloat(threePointPercentage.replace('%', ''))
-            }
-        ];
-
-        // Create axes
-        let categoryAxis = chart.xAxes.push(new am5.CategoryAxis());
-        categoryAxis.dataFields.category = "statistic";
-
-        let valueAxis = chart.yAxes.push(new am5.ValueAxis());
-
-        // Create series
-        let series = chart.series.push(new am5.ColumnSeries());
-        series.dataFields.valueY = "value";
-        series.dataFields.categoryX = "statistic";
-        series.tooltipText = "{categoryX}: {valueY}";
-
-        return () => {
-            // Cleanup when component unmounts
-            chart.dispose();
-        };
-    }, [averageWinRate, fieldGoalPercentage, threePointPercentage]);
-
-    return (
-        <div>
-            <h2>Team Statistics</h2>
-            <p>Average Win Rate: {averageWinRate}</p>
-            <p>Field Goal Percentage: {fieldGoalPercentage}</p>
-            <p>Three-Point Percentage: {threePointPercentage}</p>
-            {/* Display other statistics here */}
-            <div id="chartDiv" style={{ width: "100%", height: "500px" }}></div>
-        </div>
-    );
+  return (
+    <div className="team-stats-container">
+      <h2 className="team-stats-title">Team Statistics</h2>
+      {teamStats ? (
+        <Container>
+          <Row>
+            <Col md={4}>
+              <div className="statistic">
+                <span className="stat-label">Win Rate:</span>
+                <span className="stat-value">{teamStats.winRate}</span>
+              </div>
+            </Col>
+            <Col md={4}>
+              <div className="statistic">
+                <span className="stat-label">Average Win Rate:</span>
+                <span className="stat-value">{teamStats.averageWinRate}</span>
+              </div>
+            </Col>
+            <Col md={4}>
+              <div className="statistic">
+                <span className="stat-label">Total Games Played:</span>
+                <span className="stat-value">{teamStats.totalGamesPlayed}</span>
+              </div>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={4}>
+              <div className="statistic">
+                <span className="stat-label">Field Goal Percentage:</span>
+                <span className="stat-value">{teamStats.fieldGoalPercentage}</span>
+              </div>
+            </Col>
+            <Col md={4}>
+              <div className="statistic">
+                <span className="stat-label">Three-Point Percentage:</span>
+                <span className="stat-value">{teamStats.threePointPercentage}</span>
+              </div>
+            </Col>
+            <Col md={4}>
+              <div className="statistic">
+                <span className="stat-label">Free Throw Percentage:</span>
+                <span className="stat-value">{teamStats.freeThrowPercentage}</span>
+              </div>
+            </Col>
+          </Row>
+          <Row>
+          <Col md={4}>
+              <div className="statistic">
+                <span className="stat-label">Rebounds:</span>
+                <span className="stat-value">{teamStats.averageRebounds}</span>
+              </div>
+            </Col>
+            <Col md={4}>
+              <div className="statistic">
+                <span className="stat-label">Average Assists:</span>
+                <span className="stat-value">{teamStats.averageAssists}</span>
+              </div>
+            </Col>
+            <Col md={4}>
+              <div className="statistic">
+                <span className="stat-label">Average Steals:</span>
+                <span className="stat-value">{teamStats.averageSteals}</span>
+              </div>
+            </Col>
+          </Row>
+          <Row>
+          <Col md={4}>
+              <div className="statistic">
+                <span className="stat-label">Average Blocks:</span>
+                <span className="stat-value">{teamStats.averageBlocks}</span>
+              </div>
+            </Col>
+            <Col md={4}>
+              <div className="statistic">
+                <span className="stat-label">Average Turnovers:</span>
+                <span className="stat-value">{teamStats.averageTurnovers}</span>
+              </div>
+            </Col>
+            <Col md={4}>
+              <div className="statistic">
+                <span className="stat-label">Average Personal Fouls:</span>
+                <span className="stat-value">{teamStats.averagePersonalFouls}</span>
+              </div>
+            </Col>
+          </Row>
+        </Container>
+      ) : (
+        <p>Loading team statistics...</p>
+      )}
+    </div>
+  );
 }
 
 export default DisplayStats;
