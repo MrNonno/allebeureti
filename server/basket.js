@@ -126,61 +126,25 @@ app.get('/api/teams', async (req, res) => {
 });
 
 //MARK: Team Stats
-// Endpoint to retrieve statistics for a specific team
 app.get('/api/teams/:teamId/statistics', async (req, res) => {
     try {
         const teamId = parseInt(req.params.teamId);
+        console.log('Received request for team statistics. Team ID:', teamId);
 
         const db = getDatabase();
+        console.log('Connected to the database.');
+
         const gamesCollection = db.collection('games');
+        const statsCollection = db.collection('stats');
 
         // Retrieve team information from teams collection
         const team = await db.collection('teams').findOne({ id: teamId });
+        console.log('Retrieved team information:', team);
 
         if (!team) {
+            console.log('Team not found.');
             return res.status(404).json({ error: 'Team not found' });
         }
-
-        // Find all games where the team is either the home team or the visitor team
-        const teamGames = await gamesCollection.find({
-            $or: [
-                { "home_team.full_name": team.full_name },
-                { "visitor_team.full_name": team.full_name }
-            ]
-        }).toArray();
-
-        // Calculate win rate for the team
-        const totalGamesPlayed = teamGames.length;
-        const totalWins = teamGames.filter(game => {
-            if (game.home_team.full_name === team.full_name && game.home_team_score > game.visitor_team_score) {
-                return true;
-            }
-            if (game.visitor_team.full_name === team.full_name && game.visitor_team_score > game.home_team_score) {
-                return true;
-            }
-            return false;
-        }).length;
-
-        const winRate = totalGamesPlayed > 0 ? (totalWins / totalGamesPlayed) * 100 : 0;
-
-        res.json({
-            team: team.full_name,
-            winRate: winRate.toFixed(2) + '%',
-            totalGamesPlayed: totalGamesPlayed
-            // Add more statistics as needed
-        });
-    } catch (err) {
-        console.error('Error fetching statistics for team:', err);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
-
-// Endpoint to calculate average win rate of the team
-app.get('/api/teams/:teamId/average-win-rate', async (req, res) => {
-    try {
-        const teamId = parseInt(req.params.teamId);
-        const db = getDatabase();
-        const gamesCollection = db.collection('games');
 
         // Find all games where the team is either the home team or the visitor team
         const teamGames = await gamesCollection.find({
@@ -189,6 +153,13 @@ app.get('/api/teams/:teamId/average-win-rate', async (req, res) => {
                 { "visitor_team.id": teamId }
             ]
         }).toArray();
+
+        console.log('Retrieved team games:', teamGames);
+
+        // Find all stats for the team
+        const teamStats = await statsCollection.find({ "team.id": teamId }).toArray();
+
+        console.log('Retrieved team stats:', teamStats);
 
         // Calculate total games played and total wins
         let totalGamesPlayed = 0;
@@ -205,17 +176,59 @@ app.get('/api/teams/:teamId/average-win-rate', async (req, res) => {
             }
         });
 
+        console.log('Total games played:', totalGamesPlayed);
+        console.log('Total wins:', totalWins);
+
         // Calculate average win rate
         const averageWinRate = totalGamesPlayed > 0 ? (totalWins / totalGamesPlayed) * 100 : 0;
+        console.log('Average win rate:', averageWinRate);
 
-        res.json({ averageWinRate: averageWinRate.toFixed(2) + '%' });
+        // Calculate total field goals made and attempted
+        let totalFGMade = 0;
+        let totalFGAttempted = 0;
+        teamStats.forEach(stat => {
+            totalFGMade += stat.fgm;
+            totalFGAttempted += stat.fga;
+        });
+
+        // Calculate field goal percentage
+        const fieldGoalPercentage = totalFGAttempted > 0 ? (totalFGMade / totalFGAttempted) * 100 : 0;
+        console.log('Field goal percentage:', fieldGoalPercentage);
+
+        res.json({
+            team: team.full_name,
+            winRate: (totalGamesPlayed > 0 ? ((totalWins / totalGamesPlayed) * 100).toFixed(2) + '%' : '0%'),
+            averageWinRate: averageWinRate.toFixed(2) + '%',
+            totalGamesPlayed: totalGamesPlayed,
+            fieldGoalPercentage: fieldGoalPercentage.toFixed(2) + '%'
+            // Add more statistics as needed
+        });
     } catch (err) {
-        console.error('Error calculating average win rate:', err);
+        console.error('Error fetching statistics for team:', err);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
 
-// Endpoint to calculate field goal percentage (FG%) of the team
+//MARK: Players here
+// Endpoint to retrieve all players
+app.get('/api/players', async (req, res) => {
+    try {
+        const db = getDatabase();
+        const collection = db.collection('players');
+        const players = await collection.find({}).toArray();
+        res.json(players);
+    } catch (err) {
+        console.error('Error fetching players:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Power up!
+app.listen(port, () => {
+    console.log(`Server listening at http://localhost:${port}`);
+});
+
+/* // Endpoint to calculate field goal percentage (FG%) of the team
 app.get('/api/teams/:teamId/field-goal-percentage', async (req, res) => {
     try {
         const teamId = parseInt(req.params.teamId);
@@ -453,23 +466,4 @@ app.get('/api/teams/:teamId/average-personal-fouls', async (req, res) => {
         console.error('Error calculating average personal fouls:', err);
         res.status(500).json({ error: 'Internal server error' });
     }
-});
-
-//MARK: Players here
-// Endpoint to retrieve all players
-app.get('/api/players', async (req, res) => {
-    try {
-        const db = getDatabase();
-        const collection = db.collection('players');
-        const players = await collection.find({}).toArray();
-        res.json(players);
-    } catch (err) {
-        console.error('Error fetching players:', err);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
-
-// Start the server
-app.listen(port, () => {
-    console.log(`Server listening at http://localhost:${port}`);
-});
+});*/
